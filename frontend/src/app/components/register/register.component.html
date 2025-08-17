@@ -1,0 +1,99 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="text-center">Register</h3>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="full_name" class="form-label">Full Name</label>
+              <input 
+                type="text" 
+                id="full_name"
+                class="form-control" 
+                formControlName="full_name"
+                [class.is-invalid]="isFieldInvalid('full_name')"
+              >
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('full_name')">
+                Full name is required
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input 
+                type="email" 
+                id="email"
+                class="form-control" 
+                formControlName="email"
+                [class.is-invalid]="isFieldInvalid('email')"
+              >
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('email')">
+                Email is required and must be valid
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input 
+                type="password" 
+                id="password"
+                class="form-control" 
+                formControlName="password"
+                [class.is-invalid]="isFieldInvalid('password')"
+              >
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('password')">
+                Password must be at least 6 characters
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="phone" class="form-label">Phone (Optional)</label>
+              <input 
+                type="tel" 
+                id="phone"
+                class="form-control" 
+                formControlName="phone"
+              >
+            </div>
+
+            <div class="mb-3">
+              <label for="address" class="form-label">Address (Optional)</label>
+              <textarea 
+                id="address"
+                class="form-control" 
+                formControlName="address"
+                rows="3"
+              ></textarea>
+            </div>
+
+            <div class="alert alert-danger" *ngIf="errorMessage">
+              {{ errorMessage }}
+            </div>
+
+            <div class="alert alert-success" *ngIf="successMessage">
+              {{ successMessage }}
+            </div>
+
+            <div class="d-grid">
+              <button 
+                type="submit" 
+                class="btn btn-primary"
+                [disabled]="registerForm.invalid || loading"
+              >
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                {{ loading ? 'Registering...' : 'Register' }}
+              </button>
+            </div>
+          </form>
+
+          <div class="text-center mt-3">
+            <p>Already have an account? <a routerLink="/login">Login here</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

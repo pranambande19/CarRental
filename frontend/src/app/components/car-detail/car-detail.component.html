@@ -1,0 +1,145 @@
+<div class="container mt-4" *ngIf="car">
+  <div class="row">
+    <div class="col-md-6">
+      <img [src]="car.image_url || 'assets/default-car.jpg'" 
+           [alt]="car.name" 
+           class="img-fluid rounded">
+    </div>
+    <div class="col-md-6">
+      <h2>{{ car.name }}</h2>
+      <p class="text-muted">{{ car.description }}</p>
+      
+      <div class="row mb-3">
+        <div class="col-6">
+          <strong>Brand:</strong> {{ car.brand }}
+        </div>
+        <div class="col-6">
+          <strong>Model:</strong> {{ car.model }}
+        </div>
+      </div>
+      
+      <div class="row mb-3">
+        <div class="col-6">
+          <strong>Year:</strong> {{ car.year }}
+        </div>
+        <div class="col-6">
+          <strong>Color:</strong> {{ car.color }}
+        </div>
+      </div>
+      
+      <div class="row mb-3">
+        <div class="col-6">
+          <strong>Seats:</strong> {{ car.seats }}
+        </div>
+        <div class="col-6">
+          <strong>Fuel Type:</strong> {{ car.fuel_type }}
+        </div>
+      </div>
+      
+      <div class="row mb-3">
+        <div class="col-6">
+          <strong>Transmission:</strong> {{ car.transmission }}
+        </div>
+        <div class="col-6">
+          <strong>Category:</strong> {{ car.category_name }}
+        </div>
+      </div>
+      
+      <div class="alert alert-info">
+        <h4 class="text-primary">₹{{ car.price_per_day }}/day</h4>
+      </div>
+      
+      <div class="card mt-4" *ngIf="authService.isLoggedIn(); else loginPrompt">
+        <div class="card-header">
+          <h5>Book This Car</h5>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="bookingForm" (ngSubmit)="onBooking()">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="start_date" class="form-label">Start Date</label>
+                <input 
+                  type="date" 
+                  id="start_date"
+                  class="form-control" 
+                  formControlName="start_date"
+                  [class.is-invalid]="isFieldInvalid('start_date')"
+                  [min]="minDate"
+                >
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('start_date')">
+                  Start date is required
+                </div>
+              </div>
+              
+              <div class="col-md-6 mb-3">
+                <label for="end_date" class="form-label">End Date</label>
+                <input 
+                  type="date" 
+                  id="end_date"
+                  class="form-control" 
+                  formControlName="end_date"
+                  [class.is-invalid]="isFieldInvalid('end_date')"
+                  [min]="bookingForm.get('start_date')?.value || minDate"
+                >
+                <div class="invalid-feedback" *ngIf="isFieldInvalid('end_date')">
+                  End date is required and must be after start date
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-3" *ngIf="totalAmount > 0">
+              <div class="alert alert-success">
+                <strong>Total Amount: ₹{{ totalAmount }}</strong>
+                <br>
+                <small>{{ totalDays }} day(s) × ₹{{ car.price_per_day }}/day</small>
+              </div>
+            </div>
+            
+            <div class="alert alert-danger" *ngIf="bookingError">
+              {{ bookingError }}
+            </div>
+            
+            <div class="alert alert-success" *ngIf="bookingSuccess">
+              {{ bookingSuccess }}
+            </div>
+            
+            <div class="d-grid">
+              <button 
+                type="submit" 
+                class="btn btn-primary btn-lg"
+                [disabled]="bookingForm.invalid || bookingLoading"
+              >
+                <span *ngIf="bookingLoading" class="spinner-border spinner-border-sm me-2"></span>
+                {{ bookingLoading ? 'Booking...' : 'Book Now' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <ng-template #loginPrompt>
+        <div class="alert alert-warning">
+          <h5>Login Required</h5>
+          <p>Please <a routerLink="/login">login</a> to book this car.</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-4" *ngIf="!car && !loading">
+  <div class="alert alert-danger">
+    <h4>Car not found</h4>
+    <p>The requested car could not be found.</p>
+    <a routerLink="/cars" class="btn btn-primary">Back to Cars</a>
+  </div>
+</div>
+
+<div class="container mt-4" *ngIf="loading">
+  <div class="text-center">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading car details...</p>
+  </div>
+</div>
